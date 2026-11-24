@@ -17,12 +17,12 @@ the Free Software Foundation; either version 2 of the License, or
 // public ingest servers each platform documents, plus links to the official
 // page where a user finds THEIR OWN stream key.
 struct PlatformPreset {
-	QString id;          // stable id saved in config/export ("twitch")
-	QString name;        // shown in the UI ("Twitch")
-	QString server;      // public default server, empty = user must paste one
-	QString keyHelp;     // one-line "where is my key" text
-	QString keyUrl;      // official page where the key is found
-	bool keyChanges;     // true when the platform issues a new key every stream
+	QString id;      // stable id saved in config/export ("twitch")
+	QString name;    // shown in the UI ("Twitch")
+	QString server;  // public default server, empty = user must paste one
+	QString keyHelp; // one-line "where is my key" text
+	QString keyUrl;  // official page where the key is found
+	bool keyChanges; // true when the platform issues a new key every stream
 };
 
 const QList<PlatformPreset> &platformPresets();

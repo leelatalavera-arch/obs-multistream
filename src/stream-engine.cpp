@@ -17,14 +17,14 @@ namespace {
 // Best first. Ids that aren't installed are skipped, ids that fail to
 // initialise (no GPU, driver too old, ...) fall through to the next one.
 const char *const kAutoVideoEncoders[] = {
-	"obs_nvenc_h264_tex", // NVIDIA (OBS 31+)
-	"jim_nvenc",          // NVIDIA (older OBS)
-	"h264_texture_amf",   // AMD
-	"obs_qsv11_v2",       // Intel QuickSync
+	"obs_nvenc_h264_tex",                          // NVIDIA (OBS 31+)
+	"jim_nvenc",                                   // NVIDIA (older OBS)
+	"h264_texture_amf",                            // AMD
+	"obs_qsv11_v2",                                // Intel QuickSync
 	"com.apple.videotoolbox.videoencoder.ave.avc", // Apple hardware
-	"obs_nvenc_h264_cuda", // NVIDIA (Linux)
-	"ffmpeg_vaapi_tex",    // Linux VA-API
-	"obs_x264",            // CPU, always last
+	"obs_nvenc_h264_cuda",                         // NVIDIA (Linux)
+	"ffmpeg_vaapi_tex",                            // Linux VA-API
+	"obs_x264",                                    // CPU, always last
 };
 
 const char *const kAudioEncoders[] = {"ffmpeg_aac", "CoreAudio_AAC", "libfdk_aac"};
@@ -136,7 +136,8 @@ QList<EncoderChoice> StreamEngine::availableVideoEncoders()
 			continue;
 		QString label = encoderLabel(id);
 		if (strcmp(codec, "h264") != 0)
-			label += QStringLiteral(" — not every platform accepts %1").arg(QString::fromUtf8(codec).toUpper());
+			label += QStringLiteral(" — not every platform accepts %1")
+					 .arg(QString::fromUtf8(codec).toUpper());
 		list.append({QString::fromUtf8(id), label});
 	}
 	return list;

@@ -18,8 +18,7 @@ const QList<PlatformPreset> &platformPresets()
 		{"youtube", "YouTube", "rtmps://a.rtmps.youtube.com:443/live2",
 		 "YouTube Studio > Create > Go live > Stream settings > Stream key.",
 		 "https://support.google.com/youtube/answer/2907883", false},
-		{"kick", "Kick", "",
-		 "Kick dashboard > Settings > Stream URL & Key. Paste BOTH the URL and the key.",
+		{"kick", "Kick", "", "Kick dashboard > Settings > Stream URL & Key. Paste BOTH the URL and the key.",
 		 "https://help.kick.com/en/articles/7066931-how-to-stream-on-kick-com", false},
 		{"tiktok", "TikTok", "",
 		 "TikTok LIVE Producer (on a computer). The server URL and key change EVERY stream.",
@@ -28,10 +27,9 @@ const QList<PlatformPreset> &platformPresets()
 		 "Instagram on a computer > Create > Live video. The URL and key change EVERY stream.",
 		 "https://about.instagram.com/blog/tips-and-tricks/instagram-live-producer", true},
 		{"facebook", "Facebook", "rtmps://rtmp-api.facebook.com:443/rtmp/",
-		 "Facebook Live Producer > Streaming software > Stream key.",
-		 "https://www.facebook.com/live/producer", false},
-		{"x", "X (Twitter)", "",
-		 "X Media Studio > Producer > Sources. Paste the RTMP URL and key.",
+		 "Facebook Live Producer > Streaming software > Stream key.", "https://www.facebook.com/live/producer",
+		 false},
+		{"x", "X (Twitter)", "", "X Media Studio > Producer > Sources. Paste the RTMP URL and key.",
 		 "https://studio.x.com/producer", false},
 	};
 	return presets;
@@ -40,8 +38,8 @@ const QList<PlatformPreset> &platformPresets()
 const PlatformPreset &customPreset()
 {
 	static const PlatformPreset custom = {
-		"custom", "Custom RTMP", "",
-		"Any service that gives you an RTMP or RTMPS server URL and a stream key.", "", false};
+		"custom", "Custom RTMP", "", "Any service that gives you an RTMP or RTMPS server URL and a stream key.",
+		"",       false};
 	return custom;
 }
 

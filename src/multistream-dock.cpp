@@ -368,8 +368,9 @@ void MultistreamDock::removeDestination(const QString &id)
 		QMessageBox::information(this, d->name, QStringLiteral("Stop this platform before removing it."));
 		return;
 	}
-	if (QMessageBox::question(this, QStringLiteral("Remove platform"),
-				  QStringLiteral("Remove \"%1\" and its saved key from this OBS profile?").arg(d->name)) !=
+	if (QMessageBox::question(
+		    this, QStringLiteral("Remove platform"),
+		    QStringLiteral("Remove \"%1\" and its saved key from this OBS profile?").arg(d->name)) !=
 	    QMessageBox::Yes)
 		return;
 	engine_.forget(id);
@@ -401,9 +402,10 @@ void MultistreamDock::exportSetup()
 		QMessageBox::information(this, QStringLiteral("Export"), QStringLiteral("Add a platform first."));
 		return;
 	}
-	const QString path = QFileDialog::getSaveFileName(this, QStringLiteral("Export setup (no keys)"),
-							  QDir::home().filePath(QStringLiteral("multistream-setup.json")),
-							  QStringLiteral("Multistream setup (*.json)"));
+	const QString path =
+		QFileDialog::getSaveFileName(this, QStringLiteral("Export setup (no keys)"),
+					     QDir::home().filePath(QStringLiteral("multistream-setup.json")),
+					     QStringLiteral("Multistream setup (*.json)"));
 	if (path.isEmpty())
 		return;
 	QFile f(path);
@@ -436,15 +438,17 @@ void MultistreamDock::importSetup()
 		return;
 	}
 	if (r.destinations.isEmpty()) {
-		QMessageBox::information(this, QStringLiteral("Import"), QStringLiteral("That setup has no platforms."));
+		QMessageBox::information(this, QStringLiteral("Import"),
+					 QStringLiteral("That setup has no platforms."));
 		return;
 	}
 
 	bool replace = false;
 	if (!setup_.destinations.isEmpty()) {
 		QMessageBox box(QMessageBox::Question, QStringLiteral("Import"),
-				QStringLiteral("You already have %1 platform(s). Add the imported ones to your list, or "
-					       "replace your list?")
+				QStringLiteral(
+					"You already have %1 platform(s). Add the imported ones to your list, or "
+					"replace your list?")
 					.arg(setup_.destinations.size()),
 				QMessageBox::NoButton, this);
 		QPushButton *addBtn = box.addButton(QStringLiteral("Add to my list"), QMessageBox::AcceptRole);

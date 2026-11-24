@@ -90,8 +90,7 @@ void hotkeyFromJson(obs_hotkey_id id, const QJsonValue &v)
 {
 	QJsonObject wrapObj;
 	wrapObj["b"] = v.isArray() ? v : QJsonArray();
-	obs_data_t *wrap =
-		obs_data_create_from_json(QJsonDocument(wrapObj).toJson(QJsonDocument::Compact).constData());
+	obs_data_t *wrap = obs_data_create_from_json(QJsonDocument(wrapObj).toJson(QJsonDocument::Compact).constData());
 	obs_data_array_t *arr = wrap ? obs_data_get_array(wrap, "b") : nullptr;
 	obs_hotkey_load(id, arr);
 	obs_data_array_release(arr);
@@ -244,14 +243,14 @@ void onFrontendEventTooOld(enum obs_frontend_event event, void *)
 	if (event != OBS_FRONTEND_EVENT_FINISHED_LOADING)
 		return;
 	auto *main = static_cast<QWidget *>(obs_frontend_get_main_window());
-	QMessageBox::information(main, QStringLiteral("Multistream for OBS"),
-				 QStringLiteral("<b>Multistream needs a newer OBS.</b><br><br>"
-						"It needs OBS %1 or newer, and you have OBS %2.<br>"
-						"Update OBS from <a href=\"https://obsproject.com/download\">"
-						"obsproject.com/download</a>. Your scenes and settings are kept.<br><br>"
-						"Multistream is switched off until then. Nothing else is affected.")
-					 .arg(QString::fromLatin1(kMinObsText),
-					      QString::fromUtf8(obs_get_version_string())));
+	QMessageBox::information(
+		main, QStringLiteral("Multistream for OBS"),
+		QStringLiteral("<b>Multistream needs a newer OBS.</b><br><br>"
+			       "It needs OBS %1 or newer, and you have OBS %2.<br>"
+			       "Update OBS from <a href=\"https://obsproject.com/download\">"
+			       "obsproject.com/download</a>. Your scenes and settings are kept.<br><br>"
+			       "Multistream is switched off until then. Nothing else is affected.")
+			.arg(QString::fromLatin1(kMinObsText), QString::fromUtf8(obs_get_version_string())));
 }
 
 } // namespace
@@ -264,15 +263,14 @@ bool obs_module_load(void)
 	// "OBS too old" path on a current OBS.
 	g_tooOld = obs_get_version() < kMinObsVersion || !qgetenv("MULTISTREAM_TEST_PRETEND_OLD_OBS").isEmpty();
 	if (g_tooOld) {
-		obs_log(LOG_WARNING, "OBS %s is older than %s; plugin disabled", obs_get_version_string(),
-			kMinObsText);
+		obs_log(LOG_WARNING, "OBS %s is older than %s; plugin disabled", obs_get_version_string(), kMinObsText);
 		obs_frontend_add_event_callback(onFrontendEventTooOld, nullptr);
 		return true; // stay loaded so the friendly message can show; do nothing else
 	}
 
 	g = new State();
-	g->hkStart = obs_hotkey_register_frontend("obs_multistream.start_all", "Multistream: Start all",
-						  onHotkeyStart, nullptr);
+	g->hkStart = obs_hotkey_register_frontend("obs_multistream.start_all", "Multistream: Start all", onHotkeyStart,
+						  nullptr);
 	g->hkStop = obs_hotkey_register_frontend("obs_multistream.stop_all", "Multistream: Stop all", onHotkeyStop,
 						 nullptr);
 

@@ -9,6 +9,7 @@ Everything came from official sources. Only the Visual Studio Build Tools needed
 | OBS sources 31.1.1 + obs-deps 2025-07-11 + Qt6 | as in `buildspec.json` | `.deps/` in this folder (downloaded by CMake from github.com/obsproject) | Headers/libs to build against | Delete the `.deps` folder |
 | Portable OBS copies (test only) | 32.2.1 (copy of the installed OBS) | `tools/obs-portable`, `tools/obs-installer-test` | Run tests without touching your real OBS or settings | Delete the folders |
 | MediaMTX | 1.21.4 | `tools/mediamtx` (github.com/bluenviron/mediamtx releases) | Local RTMP server for the end-to-end test | Delete the folder |
+| clang-format + gersemi (PyPI) | 19.1.1 / 0.29.2 | `tools/fmt-venv` (Python virtual env) | Match OBS's code-format rules so CI's format check passes | Delete the folder |
 | FFmpeg/ffprobe (BtbN build, linked from ffmpeg.org) | N-129241 (2026-11-23) | `tools/ffmpeg` | Check the test streams | Delete the folder |
 
 Not installed (couldn't be used without changes that need your OK):

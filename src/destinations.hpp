@@ -22,8 +22,7 @@ struct EncoderSettings {
 
 	bool operator==(const EncoderSettings &o) const
 	{
-		return encoderId == o.encoderId && videoBitrate == o.videoBitrate &&
-		       audioBitrate == o.audioBitrate;
+		return encoderId == o.encoderId && videoBitrate == o.videoBitrate && audioBitrate == o.audioBitrate;
 	}
 	bool operator!=(const EncoderSettings &o) const { return !(*this == o); }
 };
