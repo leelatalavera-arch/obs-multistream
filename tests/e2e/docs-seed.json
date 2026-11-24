@@ -1,0 +1,8 @@
+{"config_version":1,"link_main_stream":false,
+ "shared_encoder":{"encoder":"auto","video_bitrate":2500,"audio_bitrate":128},
+ "destinations":[
+  {"id":"d1","name":"Twitch","platform":"twitch","server":"rtmp://127.0.0.1:1935/live","key":"tw","enabled":true},
+  {"id":"d2","name":"YouTube","platform":"youtube","server":"rtmp://127.0.0.1:1935/live","key":"yt","enabled":true},
+  {"id":"d3","name":"Kick","platform":"kick","server":"rtmp://127.0.0.1:1935/live","key":"kk","enabled":true},
+  {"id":"d4","name":"TikTok","platform":"tiktok","server":"","key":"","enabled":true}
+ ]}

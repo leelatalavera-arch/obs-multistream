@@ -1,0 +1,19 @@
+Multistream for OBS - Linux
+===========================
+
+Option A (Ubuntu / Debian, easiest): install the .deb
+  Double-click the .deb file, or in a terminal:
+      sudo apt install ./obs-multistream-*.deb
+  Remove it later with:
+      sudo apt remove obs-multistream
+
+Option B (any distro, no sudo): this .tar.gz
+  1. Close OBS.
+  2. Open a terminal in this folder and run:   ./install.sh
+  3. Start OBS. The Multistream dock opens the first time
+     (later: Docks > Multistream).
+  Remove it later with:   ./uninstall.sh
+
+Needs OBS 31.0 or newer, installed from your distro or the official OBS PPA
+(not the Flatpak; Flatpak OBS only loads plugins packaged as Flatpak
+extensions).

@@ -1,0 +1,13 @@
+{
+  "config_version": 1,
+  "link_main_stream": false,
+  "shared_encoder": {"encoder": "auto", "video_bitrate": 2500, "audio_bitrate": 128},
+  "destinations": [
+    {"id": "t1", "name": "Test A (shared)", "platform": "custom", "server": "rtmp://127.0.0.1:1935/live", "key": "a", "enabled": true, "custom_encoder": false, "encoder_settings": {}},
+    {"id": "t2", "name": "Test B (shared)", "platform": "custom", "server": "rtmp://127.0.0.1:1935/live", "key": "b", "enabled": true, "custom_encoder": false, "encoder_settings": {}},
+    {"id": "t3", "name": "Test C (own x264)", "platform": "custom", "server": "rtmp://127.0.0.1:1935/live", "key": "c", "enabled": true, "custom_encoder": true, "encoder_settings": {"encoder": "obs_x264", "video_bitrate": 1500, "audio_bitrate": 96}},
+    {"id": "t4", "name": "Test D (disabled)", "platform": "custom", "server": "rtmp://127.0.0.1:1935/live", "key": "d", "enabled": false, "custom_encoder": false, "encoder_settings": {}},
+    {"id": "t5", "name": "Test E (dead server)", "platform": "custom", "server": "rtmp://127.0.0.1:1999/live", "key": "e", "enabled": true, "custom_encoder": false, "encoder_settings": {}},
+    {"id": "t6", "name": "Test F (no key)", "platform": "twitch", "server": "rtmp://live.twitch.tv/app", "key": "", "enabled": true, "custom_encoder": false, "encoder_settings": {}}
+  ]
+}

@@ -1,0 +1,22 @@
+Multistream for OBS - manual install (Windows)
+==============================================
+
+Easiest: use the installer (obs-multistream-...-installer.exe) instead.
+
+Manual install:
+1. Close OBS.
+2. Open your OBS folder. Usually: C:\Program Files\obs-studio
+3. Copy the two folders from this zip, "obs-plugins" and "data", into that
+   OBS folder. If Windows asks to merge or replace, click Yes (it only adds
+   the plugin's files, nothing of yours is replaced).
+4. Start OBS. Open the menu Docks > Multistream.
+
+Remove it:
+1. Close OBS.
+2. Delete  C:\Program Files\obs-studio\obs-plugins\64bit\obs-multistream.dll
+3. Delete the folder  C:\Program Files\obs-studio\data\obs-plugins\obs-multistream
+4. Optional, to also remove your saved platforms and keys: delete the file
+   obs-multistream.json inside each folder in
+   %APPDATA%\obs-studio\basic\profiles\
+
+Needs OBS 31.0 or newer (64-bit).
