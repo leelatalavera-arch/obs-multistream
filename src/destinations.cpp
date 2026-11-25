@@ -125,7 +125,8 @@ Setup fromConfigJson(const QJsonObject &root)
 	s.linkMainStream = root.value("link_main_stream").toBool(false);
 	s.hotkeys = root.value("hotkeys");
 
-	for (const auto &v : root.value("destinations").toArray()) {
+	const QJsonArray list = root.value("destinations").toArray();
+	for (const auto &v : list) {
 		const QJsonObject o = v.toObject();
 		Destination d;
 		d.id = o.value("id").toString();
