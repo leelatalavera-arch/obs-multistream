@@ -126,8 +126,8 @@ Setup fromConfigJson(const QJsonObject &root)
 	s.hotkeys = root.value("hotkeys");
 
 	const QJsonArray list = root.value("destinations").toArray();
-	for (const auto &v : list) {
-		const QJsonObject o = v.toObject();
+	for (qsizetype i = 0; i < list.size(); i++) {
+		const QJsonObject o = list.at(i).toObject();
 		Destination d;
 		d.id = o.value("id").toString();
 		if (d.id.isEmpty())
