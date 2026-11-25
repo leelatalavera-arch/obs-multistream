@@ -16,6 +16,7 @@ jobs:
   linux:
     name: Ubuntu 24.04 + OBS PPA 🐧
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Get packages
@@ -33,16 +34,21 @@ jobs:
         run: sudo apt-get install -y ./$(find pkgs -name '*x86_64-linux-gnu.deb' | grep -v dbgsym | head -1)
       - name: Run OBS with the plugin
         run: |
-          mkdir -p ~/.config/obs-studio/basic/profiles/Untitled
-          printf '[General]\nFirstRun=true\nLastVersion=536936449\n' | tee ~/.config/obs-studio/global.ini > ~/.config/obs-studio/user.ini
-          cp tests/e2e/seed-config.json ~/.config/obs-studio/basic/profiles/Untitled/obs-multistream.json
+          C=~/.config/obs-studio
+          mkdir -p "$C"
+          printf '[General]\nFirstRun=true\nLastVersion=536936449\n' | tee "$C/global.ini" > "$C/user.ini"
+          export LIBGL_ALWAYS_SOFTWARE=1
+          # 1st run: let OBS create its profile, then put the test setup in it
+          MULTISTREAM_TEST_AUTOSTART=999999 MULTISTREAM_TEST_EXIT_AFTER=3000 timeout 90 xvfb-run -a -s "-screen 0 1920x1080x24" obs --disable-shutdown-check --disable-updater > /tmp/obs-first.log 2>&1 || true
+          for d in "$C"/basic/profiles/*/; do cp tests/e2e/seed-config.json "$d/obs-multistream.json"; echo "seeded $d"; done
           /tmp/mediamtx tests/e2e/mediamtx-test.yml > /tmp/mtx.log 2>&1 &
-          export MULTISTREAM_TEST_AUTOSTART=4000 MULTISTREAM_TEST_EXIT_AFTER=25000 LIBGL_ALWAYS_SOFTWARE=1
-          timeout 120 xvfb-run -a -s "-screen 0 1920x1080x24" obs --disable-shutdown-check --disable-updater > /tmp/obs-stdout.log 2>&1 &
+          MULTISTREAM_TEST_AUTOSTART=4000 MULTISTREAM_TEST_EXIT_AFTER=25000 timeout 120 xvfb-run -a -s "-screen 0 1920x1080x24" obs --disable-shutdown-check --disable-updater > /tmp/obs-stdout.log 2>&1 &
+          OBS_PID=$!
           sleep 18
           ffprobe -v error -show_entries stream=codec_name -of compact rtmp://127.0.0.1:1935/live/a | tee /tmp/probe.txt || true
-          wait || true
-          LOG=$(ls -t ~/.config/obs-studio/logs/*.txt | head -1)
+          wait $OBS_PID || true
+          kill %1 2>/dev/null || true
+          LOG=$(ls -t "$C"/logs/*.txt | head -1)
           grep -E "obs-multistream|Loaded Modules|Shutting down" "$LOG" || true
           grep -q "\[obs-multistream\] plugin loaded" "$LOG"
           grep -q "\[obs-multistream\] loaded 6 destination" "$LOG"
@@ -62,6 +68,7 @@ jobs:
   macos:
     name: macOS + OBS 🍏
     runs-on: macos-15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Get packages
@@ -82,9 +89,13 @@ jobs:
       - name: Run OBS with the plugin
         run: |
           C=~/Library/Application\ Support/obs-studio
-          mkdir -p "$C/basic/profiles/Untitled"
+          mkdir -p "$C"
           printf '[General]\nFirstRun=true\nLastVersion=536936449\nMacOSPermissionsDialogLastShown=99\n' | tee "$C/global.ini" > "$C/user.ini"
-          cp tests/e2e/seed-config.json "$C/basic/profiles/Untitled/obs-multistream.json"
+          # 1st run: let OBS create its profile, then put the test setup in it
+          MULTISTREAM_TEST_AUTOSTART=999999 MULTISTREAM_TEST_EXIT_AFTER=3000 /Applications/OBS.app/Contents/MacOS/OBS --disable-shutdown-check --disable-updater > /tmp/obs-first.log 2>&1 &
+          P1=$!; for i in $(seq 1 60); do kill -0 $P1 2>/dev/null || break; sleep 1; done; kill -9 $P1 2>/dev/null || true
+          ls -la "$C/basic/profiles/"
+          for d in "$C"/basic/profiles/*/; do cp tests/e2e/seed-config.json "$d/obs-multistream.json"; echo "seeded $d"; done
           /tmp/mediamtx tests/e2e/mediamtx-test.yml > /tmp/mtx.log 2>&1 &
           export MULTISTREAM_TEST_AUTOSTART=4000 MULTISTREAM_TEST_EXIT_AFTER=25000
           /Applications/OBS.app/Contents/MacOS/OBS --disable-shutdown-check --disable-updater > /tmp/obs-stdout.log 2>&1 &
