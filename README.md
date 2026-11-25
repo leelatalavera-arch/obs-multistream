@@ -26,8 +26,8 @@ The plugin ships with **no** personal data. Each user's destinations, keys inclu
 |---|---|---|
 | Windows | `obs-multistream-X-windows-x64-installer.exe` | Finds the OBS folder (registry, then `C:\Program Files\obs-studio`), checks the OBS version, refuses to run while OBS is open, adds an uninstaller |
 | Windows | `obs-multistream-X-windows-x64.zip` | Manual install, OBS-folder layout |
-| macOS | `obs-multistream-X-macos-universal.pkg` | Unsigned: right-click → Open (see INSTALL.md) |
-| Linux | `obs-multistream-X-x86_64-linux-gnu.deb` | Ubuntu/Debian |
+| macOS | `obs-multistream-X-macos-universal.pkg` | Unsigned (ad-hoc signed): right-click → Open. Installs to `~/Library/Application Support/obs-studio/plugins` |
+| Linux | `obs-multistream-X-x86_64-linux-gnu.deb` | Ubuntu 24.04+ with OBS from the official PPA (`obs-studio >= 31`) |
 | Linux | `obs-multistream-X-linux-x86_64.tar.gz` | Per-user install script, no sudo |
 
 ## Uninstall

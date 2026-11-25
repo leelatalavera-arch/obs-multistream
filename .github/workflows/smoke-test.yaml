@@ -1,0 +1,111 @@
+name: Smoke test packages 🧪
+# Manual test: installs the built packages on clean GitHub Linux and macOS
+# machines with real OBS, starts OBS, checks the plugin loads, opens its dock,
+# streams to a local MediaMTX server, and shuts down cleanly.
+# Run from the Actions tab with the run id of a "Push" build.
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Run id of the build whose packages to test
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  linux:
+    name: Ubuntu 24.04 + OBS PPA 🐧
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download ${{ inputs.run_id }} -R ${{ github.repository }} -D pkgs -p '*ubuntu-24.04-x86_64-*' && find pkgs -type f
+      - name: Install OBS (official PPA), Xvfb, MediaMTX, ffmpeg
+        run: |
+          sudo add-apt-repository -y ppa:obsproject/obs-studio
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq obs-studio xvfb ffmpeg mesa-utils > /dev/null
+          obs --version || true
+          curl -sL https://github.com/bluenviron/mediamtx/releases/download/v1.21.4/mediamtx_v1.21.4_linux_amd64.tar.gz | tar -xz -C /tmp
+      - name: Install the .deb
+        run: sudo apt-get install -y ./$(find pkgs -name '*x86_64-linux-gnu.deb' | grep -v dbgsym | head -1)
+      - name: Run OBS with the plugin
+        run: |
+          mkdir -p ~/.config/obs-studio/basic/profiles/Untitled
+          printf '[General]\nFirstRun=true\nLastVersion=536936449\n' | tee ~/.config/obs-studio/global.ini > ~/.config/obs-studio/user.ini
+          cp tests/e2e/seed-config.json ~/.config/obs-studio/basic/profiles/Untitled/obs-multistream.json
+          /tmp/mediamtx tests/e2e/mediamtx-test.yml > /tmp/mtx.log 2>&1 &
+          export MULTISTREAM_TEST_AUTOSTART=4000 MULTISTREAM_TEST_EXIT_AFTER=25000 LIBGL_ALWAYS_SOFTWARE=1
+          timeout 120 xvfb-run -a -s "-screen 0 1920x1080x24" obs --disable-shutdown-check --disable-updater > /tmp/obs-stdout.log 2>&1 &
+          sleep 18
+          ffprobe -v error -show_entries stream=codec_name -of compact rtmp://127.0.0.1:1935/live/a | tee /tmp/probe.txt || true
+          wait || true
+          LOG=$(ls -t ~/.config/obs-studio/logs/*.txt | head -1)
+          grep -E "obs-multistream|Loaded Modules|Shutting down" "$LOG" || true
+          grep -q "\[obs-multistream\] plugin loaded" "$LOG"
+          grep -q "\[obs-multistream\] loaded 6 destination" "$LOG"
+          grep -q "\[Test A (shared)\] live" "$LOG"
+          grep -q "codec_name=h264" /tmp/probe.txt
+          grep -q "\[obs-multistream\] plugin unloaded" "$LOG"
+          echo "LINUX SMOKE TEST PASSED"
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-smoke-logs
+          path: |
+            ~/.config/obs-studio/logs
+            /tmp/*.log
+
+  macos:
+    name: macOS + OBS 🍏
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download ${{ inputs.run_id }} -R ${{ github.repository }} -D pkgs -p '*macos-universal-*' && find pkgs -type f
+      - name: Install OBS, MediaMTX, ffmpeg
+        run: |
+          brew install --cask obs > /dev/null
+          brew install ffmpeg > /dev/null
+          defaults read /Applications/OBS.app/Contents/Info.plist CFBundleShortVersionString
+          curl -sL https://github.com/bluenviron/mediamtx/releases/download/v1.21.4/mediamtx_v1.21.4_darwin_arm64.tar.gz | tar -xz -C /tmp
+      - name: Install the .pkg (as a normal user would, into their home folder)
+        run: |
+          PKG=$(find pkgs -name '*.pkg' | head -1)
+          installer -pkg "$PKG" -target CurrentUserHomeDirectory
+          ls -la ~/Library/Application\ Support/obs-studio/plugins/
+      - name: Run OBS with the plugin
+        run: |
+          C=~/Library/Application\ Support/obs-studio
+          mkdir -p "$C/basic/profiles/Untitled"
+          printf '[General]\nFirstRun=true\nLastVersion=536936449\nMacOSPermissionsDialogLastShown=99\n' | tee "$C/global.ini" > "$C/user.ini"
+          cp tests/e2e/seed-config.json "$C/basic/profiles/Untitled/obs-multistream.json"
+          /tmp/mediamtx tests/e2e/mediamtx-test.yml > /tmp/mtx.log 2>&1 &
+          export MULTISTREAM_TEST_AUTOSTART=4000 MULTISTREAM_TEST_EXIT_AFTER=25000
+          /Applications/OBS.app/Contents/MacOS/OBS --disable-shutdown-check --disable-updater > /tmp/obs-stdout.log 2>&1 &
+          OBS_PID=$!
+          sleep 18
+          ffprobe -v error -show_entries stream=codec_name -of compact rtmp://127.0.0.1:1935/live/a | tee /tmp/probe.txt || true
+          for i in $(seq 1 60); do kill -0 $OBS_PID 2>/dev/null || break; sleep 1; done
+          kill -9 $OBS_PID 2>/dev/null || true
+          LOG=$(ls -t "$C"/logs/*.txt | head -1)
+          grep -E "obs-multistream|Shutting down" "$LOG" || true
+          grep -q "\[obs-multistream\] plugin loaded" "$LOG"
+          grep -q "\[obs-multistream\] loaded 6 destination" "$LOG"
+          grep -q "\[Test A (shared)\] live" "$LOG"
+          grep -q "codec_name=h264" /tmp/probe.txt
+          grep -q "\[obs-multistream\] plugin unloaded" "$LOG"
+          echo "MACOS SMOKE TEST PASSED"
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-smoke-logs
+          path: |
+            ~/Library/Application Support/obs-studio/logs
+            /tmp/*.log

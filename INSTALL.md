@@ -27,11 +27,11 @@ Multistream adds a panel to OBS that sends your stream to several platforms at t
 2. **Right-click** the file and choose **Open**, then click **Open** again.
    On newer macOS, if there's no Open button: click **Done**, then go to **System Settings → Privacy & Security**, scroll down, and click **Open Anyway** next to the Multistream message.
    (This is needed because the package isn't signed by a paid Apple developer account.)
-3. Click through the installer.
+3. Click through the installer. It installs for your Mac user only, so no admin password is needed.
 
 ### Linux
 
-- **Ubuntu / Debian:** double-click **`obs-multistream-…-x86_64-linux-gnu.deb`**, or run `sudo apt install ./obs-multistream-*.deb`.
+- **Ubuntu 24.04 or newer:** first install OBS from the official OBS PPA (`sudo add-apt-repository ppa:obsproject/obs-studio`, then `sudo apt install obs-studio`). The OBS in Ubuntu's own store is too old. Then run `sudo apt install ./obs-multistream-*.deb`.
 - **Any other distro:** unpack **`obs-multistream-…-linux-x86_64.tar.gz`** and run `./install.sh` (no password needed).
 - The Flatpak version of OBS can't load this plugin.
 
@@ -78,7 +78,7 @@ Tick the platforms you want, then press **Start all**. Each one turns green when
 Close OBS first.
 
 - **Windows:** **Settings → Apps → Installed apps → Multistream for OBS → Uninstall**. It asks whether to also delete your saved platforms and keys.
-- **Mac:** delete `/Library/Application Support/obs-studio/plugins/obs-multistream.plugin`. To also remove your saved platforms and keys, delete `obs-multistream.json` in each folder under `~/Library/Application Support/obs-studio/basic/profiles/`.
+- **Mac:** in Finder, press **Shift + Cmd + G**, paste `~/Library/Application Support/obs-studio/plugins` and press Return. Drag **obs-multistream.plugin** to the Trash. To also remove your saved platforms and keys, go to `~/Library/Application Support/obs-studio/basic/profiles/` the same way and delete `obs-multistream.json` inside each profile folder.
 - **Linux:** `sudo apt remove obs-multistream` (.deb), or run `./uninstall.sh` (.tar.gz).
 
 ---

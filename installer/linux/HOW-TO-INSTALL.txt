@@ -1,8 +1,11 @@
 Multistream for OBS - Linux
 ===========================
 
-Option A (Ubuntu / Debian, easiest): install the .deb
-  Double-click the .deb file, or in a terminal:
+Option A (Ubuntu 24.04 or newer): install the .deb
+  OBS must come from the official OBS PPA (Ubuntu's own OBS is too old):
+      sudo add-apt-repository ppa:obsproject/obs-studio
+      sudo apt install obs-studio
+  Then:
       sudo apt install ./obs-multistream-*.deb
   Remove it later with:
       sudo apt remove obs-multistream
