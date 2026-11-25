@@ -60,6 +60,7 @@ powershell -File installer/windows/make-packages.ps1      # .zip + .exe (needs I
   - OBS shuts down cleanly and the config persists
 
   See [TOOLS.md](TOOLS.md) for setup.
+- `.github/workflows/smoke-test.yaml` (run by hand from the Actions tab with a build's run id): installs the real .deb on Ubuntu 24.04 with OBS from the official PPA, and the real .pkg on macOS with OBS from Homebrew. It checks that the plugin loads, streams to 3 test servers, handles errors, and unloads cleanly.
 
 ## Project layout
 
