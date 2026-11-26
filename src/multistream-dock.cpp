@@ -326,7 +326,9 @@ void MultistreamDock::toggleOne(const QString &id)
 	} else {
 		QString err;
 		if (!engine_.start(*d, model::effectiveEncoder(*d, setup_.shared), &err) && !err.isEmpty())
-			QMessageBox::warning(this, d->name, QStringLiteral("Couldn't start %1: %2").arg(d->name, err));
+			QMessageBox::warning(this, d->name,
+					     QStringLiteral("Couldn't start %1: %2")
+						     .arg(d->name.toHtmlEscaped(), err.toHtmlEscaped()));
 	}
 	refreshStatus();
 }
@@ -368,10 +370,9 @@ void MultistreamDock::removeDestination(const QString &id)
 		QMessageBox::information(this, d->name, QStringLiteral("Stop this platform before removing it."));
 		return;
 	}
-	if (QMessageBox::question(
-		    this, QStringLiteral("Remove platform"),
-		    QStringLiteral("Remove \"%1\" and its saved key from this OBS profile?").arg(d->name)) !=
-	    QMessageBox::Yes)
+	if (QMessageBox::question(this, QStringLiteral("Remove platform"),
+				  QStringLiteral("Remove \"%1\" and its saved key from this OBS profile?")
+					  .arg(d->name.toHtmlEscaped())) != QMessageBox::Yes)
 		return;
 	engine_.forget(id);
 	for (int i = 0; i < setup_.destinations.size(); i++)
